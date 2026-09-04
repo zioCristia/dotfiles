@@ -1,0 +1,14 @@
+{
+    "description": "Slash -> Right Shift when held, Slash when tapped",
+    "manipulators": [
+        {
+            "from": {
+                "key_code": "slash",
+                "modifiers": { "optional": ["any"] }
+            },
+            "to": [{ "key_code": "right_shift" }],
+            "to_if_alone": [{ "key_code": "slash" }],
+            "type": "basic"
+        }
+    ]
+}

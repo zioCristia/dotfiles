@@ -1,0 +1,67 @@
+{
+    "description": "Left Command -> Left Command when held and Backspace when tapped",
+    "manipulators": [
+        {
+            "description": "Right Command (Held) + Left Command (Tap) -> Option+Delete",
+            "from": {
+                "key_code": "left_command",
+                "modifiers": {
+                    "mandatory": ["right_command"],
+                    "optional": ["caps_lock"]
+                }
+            },
+            "to": [{ "key_code": "left_command" }],
+            "to_if_alone": [
+                {
+                    "key_code": "delete_or_backspace",
+                    "modifiers": ["right_option"]
+                }
+            ],
+            "type": "basic"
+        },
+        {
+            "description": "Right Option + Left Command -> Cmd+Delete (delete line)",
+            "from": {
+                "key_code": "left_command",
+                "modifiers": {
+                    "mandatory": ["right_option"],
+                    "optional": ["caps_lock"]
+                }
+            },
+            "to": [
+                {
+                    "key_code": "delete_or_backspace",
+                    "modifiers": ["left_command"]
+                }
+            ],
+            "type": "basic"
+        },
+        {
+            "description": "Control + Left Command -> Option+Delete (delete word)",
+            "from": {
+                "key_code": "left_command",
+                "modifiers": {
+                    "mandatory": ["control"],
+                    "optional": ["caps_lock"]
+                }
+            },
+            "to": [
+                {
+                    "key_code": "delete_or_backspace",
+                    "modifiers": ["left_option"]
+                }
+            ],
+            "type": "basic"
+        },
+        {
+            "description": "Left Command -> Left Command when held and Backspace when tapped",
+            "from": {
+                "key_code": "left_command",
+                "modifiers": { "optional": ["caps_lock"] }
+            },
+            "to": [{ "key_code": "left_command" }],
+            "to_if_alone": [{ "key_code": "delete_or_backspace" }],
+            "type": "basic"
+        }
+    ]
+}

@@ -1,0 +1,19 @@
+{
+    "description": "Grave_accent_and_tilde -> F18 when held, escape when tapped",
+    "manipulators": [
+        {
+            "from": {
+                "key_code": "grave_accent_and_tilde",
+                "modifiers": { "optional": ["any"] }
+            },
+            "to": [
+                {
+                    "key_code": "f18",
+                    "modifiers": []
+                }
+            ],
+            "to_if_alone": [{ "key_code": "escape" }],
+            "type": "basic"
+        }
+    ]
+}
