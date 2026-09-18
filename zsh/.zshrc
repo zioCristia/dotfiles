@@ -137,5 +137,5 @@ alias init-ai="openwolf init; rtk init -g; codegraph init"
 eval "$(zoxide init zsh)"
 
 ### MANAGED BY RANCHER DESKTOP START (DO NOT EDIT)
-export PATH="/Users/cristiano.bicchieri/.rd/bin:$PATH"
+export PATH="$HOME/.rd/bin:$PATH"
 ### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)

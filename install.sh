@@ -150,17 +150,26 @@ if [[ "${OS}" == "Darwin" ]]; then
     # Homebrew Packages (Only if Brew is available)
     if cmd_exists brew; then
         # CLI Tools list
-        declare -A brew_pkgs=(
-            ["kubectx"]="kubectx (and kubens)"
-            ["zoxide"]="zoxide (smarter cd command)"
-            ["kube-ps1"]="kube-ps1 (K8s context/namespace prompt)"
-            ["k9s"]="k9s (Kubernetes CLI UI)"
-            ["n2s"]="n2s (NATS CLI UI)"
+        brew_pkgs=(
+            "kubectx"
+            "zoxide"
+            "kube-ps1"
+            "k9s"
+            "n2s"
+        )
+        brew_pkgs_desc=(
+            "kubectx (and kubens)"
+            "zoxide (smarter cd command)"
+            "kube-ps1 (K8s context/namespace prompt)"
+            "k9s (Kubernetes CLI UI)"
+            "n2s (NATS CLI UI)"
         )
 
-        for pkg in "${!brew_pkgs[@]}"; do
+        for ((i=0; i<${#brew_pkgs[@]}; i++)); do
+            pkg="${brew_pkgs[i]}"
+            desc="${brew_pkgs_desc[i]}"
             if ! cmd_exists "${pkg}" && [ "${pkg}" != "kube-ps1" ]; then # kube-ps1 doesn't have a binary, checked differently
-                if confirm "Install ${brew_pkgs[${pkg}]} via brew?" "Y"; then
+                if confirm "Install ${desc} via brew?" "Y"; then
                     info "Installing ${pkg}..."
                     brew install "${pkg}"
                 fi
@@ -170,29 +179,35 @@ if [[ "${OS}" == "Darwin" ]]; then
                     brew install kube-ps1
                 fi
             else
-                success "${brew_pkgs[${pkg}]} is already installed."
+                success "${desc} is already installed."
             fi
         done
 
         # GUI Casks list
-        declare -A brew_casks=(
-            ["karabiner-elements"]="Karabiner-Elements (keyboard customizer)"
-            ["hammerspoon"]="Hammerspoon (desktop automation)"
+        brew_casks=(
+            "karabiner-elements"
+            "hammerspoon"
+        )
+        brew_casks_desc=(
+            "Karabiner-Elements (keyboard customizer)"
+            "Hammerspoon (desktop automation)"
         )
 
-        for cask in "${!brew_casks[@]}"; do
+        for ((i=0; i<${#brew_casks[@]}; i++)); do
+            cask="${brew_casks[i]}"
+            desc="${brew_casks_desc[i]}"
             # App paths checking on macOS
-            local app_name=""
+            app_name=""
             if [[ "${cask}" == "karabiner-elements" ]]; then app_name="Karabiner-Elements.app"; fi
             if [[ "${cask}" == "hammerspoon" ]]; then app_name="Hammerspoon.app"; fi
 
             if [ -n "${app_name}" ] && [ ! -d "/Applications/${app_name}" ] && [ ! -d "${HOME}/Applications/${app_name}" ]; then
-                if confirm "Install ${brew_casks[${cask}]} via brew cask?" "Y"; then
+                if confirm "Install ${desc} via brew cask?" "Y"; then
                     info "Installing ${cask}..."
                     brew install --cask "${cask}"
                 fi
             else
-                success "${brew_casks[${cask}]} is already installed."
+                success "${desc} is already installed."
             fi
         done
     fi

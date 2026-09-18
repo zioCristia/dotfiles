@@ -172,11 +172,15 @@ To expand your environment, customize configurations, or track new tools, follow
 
 ### 1. Adding a New Command-Line Tool (e.g., `kubefs`)
 *   **Step A: Configure:** Add the tool's environment paths, shell source scripts, or custom aliases to your active terminal. Since `~/.zshrc` is a symlink pointing to your repository's `zsh/.zshrc`, editing `~/.zshrc` automatically keeps the repository updated.
-*   **Step B: Automate Installation:** Open `install.sh` and add your new tool to the `brew_pkgs` associative array around line 133, so it gets auto-installed on a new machine:
+*   **Step B: Automate Installation:** Open `install.sh` and add your new tool and description to the `brew_pkgs` and `brew_pkgs_desc` arrays, so it gets auto-installed on a new machine:
     ```bash
-    declare -A brew_pkgs=(
+    brew_pkgs=(
         ...
-        ["kubefs"]="kubefs (K8s virtual file system mount tool)"
+        "kubefs"
+    )
+    brew_pkgs_desc=(
+        ...
+        "kubefs (K8s virtual file system mount tool)"
     )
     ```
 *   **Step C: Commit:** Commit and push the changes:
