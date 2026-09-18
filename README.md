@@ -63,6 +63,12 @@ chmod +x install.sh
 ./install.sh
 ```
 
+To run the installation unattended (automatically accepting all package and tool installations), use the `-y` or `--yes` flag:
+
+```bash
+./install.sh -y
+```
+
 ### What `install.sh` does:
 1.  **Verifies Prerequisites**: Validates that `git`, `curl`, and `python3` are available before proceeding.
 2.  **Backs Up Existing Configs**: Any existing configurations (e.g., `~/.zshrc`, `~/.vimrc`) are backed up inside a timestamped folder under `~/.dotfiles_backup/` so you never lose anything.

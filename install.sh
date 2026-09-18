@@ -19,6 +19,20 @@ NC='\033[0m' # No Color
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 BACKUP_DIR="${HOME}/.dotfiles_backup/$(date +%Y%m%d_%H%M%S)"
 
+# Initialize and parse arguments
+AUTO_YES=false
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        -y|--yes)
+            AUTO_YES=true
+            shift
+            ;;
+        *)
+            shift
+            ;;
+    esac
+done
+
 # Print beautiful header
 echo -e "${BLUE}"
 echo "=========================================================="
@@ -26,7 +40,12 @@ echo "    💻  Populating & Bootstrapping Your Dotfiles  💻"
 echo "=========================================================="
 echo -e "${NC}"
 echo -e "Dotfiles directory: ${CYAN}${DOTFILES_DIR}${NC}"
-echo -e "Backup directory (if needed): ${CYAN}${BACKUP_DIR}${NC}\n"
+echo -e "Backup directory (if needed): ${CYAN}${BACKUP_DIR}${NC}"
+if [[ "${AUTO_YES}" == "true" ]]; then
+    echo -e "Auto-Approve:       ${GREEN}Enabled (-y)${NC}\n"
+else
+    echo -e "\n"
+fi
 
 # Helper: Print success message
 success() {
@@ -59,6 +78,11 @@ confirm() {
     local prompt="$1"
     local default="${2:-Y}"
     local answer
+
+    if [[ "${AUTO_YES}" == "true" ]]; then
+        echo -e "${YELLOW}${prompt}${NC} [Auto-Yes]"
+        return 0
+    fi
 
     if [[ "${default}" == "Y" ]]; then
         prompt="${prompt} [Y/n]: "
