@@ -71,6 +71,21 @@ chmod +x install.sh
 5.  **Symlinks Dotfiles**: Creates symbolic links from your home directories directly to this repository, ensuring changes made in either location are in sync.
 6.  **Vim Dracula Bootstrap**: Automatically clones the Dracula colorscheme repository directly into Vim's native package start folder (`~/.vim/pack/themes/start/dracula`).
 
+### ⏪ Reverting / Restoring Backup Configurations
+
+If you ever need to revert the symlinks and restore your original configuration files from a backup created by `install.sh`, you can run the `fallback.sh` script with the backup folder path as an argument:
+
+```bash
+cd ~/workspace/dotfiles
+chmod +x fallback.sh
+./fallback.sh ~/.dotfiles_backup/YYYYMMDD_HHMMSS
+```
+
+This will automatically:
+1. Detect and safely remove any existing dotfile symlinks.
+2. Interactively prompt before overwriting any modified local configuration files.
+3. Copy all original configurations back to their exact original paths under your home directory.
+
 ---
 
 ## 🛠️ Manual Installation (Without Script)
