@@ -214,3 +214,10 @@ To expand your environment, customize configurations, or track new tools, follow
     git add karabiner/rules/08_my_custom_keymap.json
     git commit -am "feat: add custom Karabiner mapping for new workspace"
     ```
+
+---
+
+## 📄 License
+
+This repository is licensed under the [MIT License](LICENSE). You are free to use, copy, modify, merge, publish, and distribute this software for any purpose.
+
