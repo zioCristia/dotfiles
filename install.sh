@@ -180,6 +180,7 @@ if [[ "${OS}" == "Darwin" ]]; then
             "kube-ps1"
             "k9s"
             "n2s"
+            "tmux"
         )
         brew_pkgs_desc=(
             "kubectx (and kubens)"
@@ -187,6 +188,7 @@ if [[ "${OS}" == "Darwin" ]]; then
             "kube-ps1 (K8s context/namespace prompt)"
             "k9s (Kubernetes CLI UI)"
             "n2s (NATS CLI UI)"
+            "tmux (terminal multiplexer)"
         )
 
         for ((i=0; i<${#brew_pkgs[@]}; i++)); do
