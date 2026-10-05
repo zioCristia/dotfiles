@@ -103,8 +103,8 @@ cd "${BACKUP_DIR}"
 temp_file_list="$(mktemp /tmp/fallback_files.XXXXXX)"
 trap 'rm -f "${temp_file_list}"' EXIT
 
-# Find all regular files in backup dir
-find . -type f > "${temp_file_list}"
+# Find all files/symlinks recursively in backup dir
+find . \( -type f -o -type l \) > "${temp_file_list}"
 
 # Count files to restore
 file_count=$(wc -l < "${temp_file_list}" | tr -d ' ')
@@ -143,7 +143,7 @@ while IFS= read -r file; do
     mkdir -p "$(dirname "${dest_path}")"
 
     # Copy file back from backup to $HOME
-    cp "${file}" "${dest_path}"
+    cp -a "${file}" "${dest_path}"
     success "  - Restored: ${dest_path}"
 
 done < "${temp_file_list}"

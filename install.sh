@@ -111,19 +111,28 @@ link_file() {
     # Check if target already exists
     if [ -e "${target_file}" ] || [ -L "${target_file}" ]; then
         # If it is a symlink pointing to the right place, do nothing
-        if [ -L "${target_file}" ] && [ "$(readlink "${target_file}")" == "${source_file}" ]; then
+        if [ -L "${target_file}" ] && [ "$(readlink "${target_file}")" = "${source_file}" ]; then
             info "Symlink for $(basename "${target_file}") already exists and is correct."
             return 0
         fi
 
         # Otherwise, backup existing file/link
-        info "Backing up existing target ${target_file} to ${BACKUP_DIR}"
-        mkdir -p "${BACKUP_DIR}/$(dirname "${target_file}" | sed "s|^${HOME}/||")"
-        mv "${target_file}" "${BACKUP_DIR}/$(dirname "${target_file}" | sed "s|^${HOME}/||")/"
+        local rel_target rel_dir
+        if [[ "${target_file}" == "${HOME}/"* ]]; then
+            rel_target="${target_file#"${HOME}/"}"
+            rel_dir="$(dirname "${rel_target}")"
+        else
+            rel_target="${target_file}"
+            rel_dir="$(dirname "${target_file}")"
+        fi
+
+        info "Backing up existing target ${target_file} to ${BACKUP_DIR}/${rel_target}"
+        mkdir -p "${BACKUP_DIR}/${rel_dir}"
+        mv "${target_file}" "${BACKUP_DIR}/${rel_dir}/"
     fi
 
     # Create the symlink
-    ln -s "${source_file}" "${target_file}"
+    ln -snf "${source_file}" "${target_file}"
     success "Linked ${target_file} -> ${source_file}"
 }
 
@@ -175,26 +184,32 @@ if [[ "${OS}" == "Darwin" ]]; then
     if cmd_exists brew; then
         # CLI Tools list
         brew_pkgs=(
+            "neovim"
+            "ripgrep"
             "kubectx"
             "zoxide"
             "kube-ps1"
             "k9s"
-            "n2s"
             "tmux"
         )
         brew_pkgs_desc=(
+            "neovim (hyperextensible Vim-based text editor)"
+            "ripgrep (fast line-oriented search tool)"
             "kubectx (and kubens)"
             "zoxide (smarter cd command)"
             "kube-ps1 (K8s context/namespace prompt)"
             "k9s (Kubernetes CLI UI)"
-            "n2s (NATS CLI UI)"
             "tmux (terminal multiplexer)"
         )
 
         for ((i=0; i<${#brew_pkgs[@]}; i++)); do
             pkg="${brew_pkgs[i]}"
             desc="${brew_pkgs_desc[i]}"
-            if ! cmd_exists "${pkg}" && [ "${pkg}" != "kube-ps1" ]; then # kube-ps1 doesn't have a binary, checked differently
+            check_cmd="${pkg}"
+            if [ "${pkg}" == "neovim" ]; then check_cmd="nvim"; fi
+            if [ "${pkg}" == "ripgrep" ]; then check_cmd="rg"; fi
+
+            if ! cmd_exists "${check_cmd}" && [ "${pkg}" != "kube-ps1" ]; then # kube-ps1 doesn't have a binary, checked differently
                 if confirm "Install ${desc} via brew?" "Y"; then
                     info "Installing ${pkg}..."
                     brew install "${pkg}"
@@ -208,6 +223,20 @@ if [[ "${OS}" == "Darwin" ]]; then
                 success "${desc} is already installed."
             fi
         done
+
+        # zsh-sage (Intelligent autosuggestions with multi-signal ranking)
+        if ! brew list zsh-sage >/dev/null 2>&1 && [ ! -d "/opt/homebrew/opt/zsh-sage" ] && [ ! -d "/usr/local/opt/zsh-sage" ]; then
+            if confirm "Install zsh-sage via brew?" "Y"; then
+                info "Trusting formula utsavmandal2022/zsh-sage/zsh-sage..."
+                brew trust --formula utsavmandal2022/zsh-sage/zsh-sage 2>/dev/null || true
+                info "Tapping utsavmandal2022/zsh-sage..."
+                brew tap UtsavMandal2022/zsh-sage
+                info "Installing zsh-sage..."
+                brew install zsh-sage
+            fi
+        else
+            success "zsh-sage is already installed."
+        fi
 
         # GUI Casks list
         brew_casks=(
@@ -252,6 +281,33 @@ else
     success "Oh My Zsh is installed."
 fi
 
+# Kitty Terminal Emulator (Multiplatform)
+if ! cmd_exists kitty && [ ! -d "/Applications/kitty.app" ] && [ ! -d "${HOME}/Applications/kitty.app" ] && [ ! -d "${HOME}/.local/kitty.app" ]; then
+    if confirm "Kitty terminal is not installed. Would you like to install it?" "Y"; then
+        info "Installing Kitty..."
+        curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin launch=n
+        success "Kitty installed."
+    else
+        warn "Skipping Kitty installation."
+    fi
+else
+    success "Kitty terminal is already installed."
+fi
+
+# LazyVim Starter (Neovim configuration)
+if [ ! -d "${HOME}/.config/nvim" ] || [ -z "$(ls -A "${HOME}/.config/nvim" 2>/dev/null)" ]; then
+    if confirm "LazyVim configuration (~/.config/nvim) is not installed. Would you like to install it?" "Y"; then
+        info "Installing LazyVim starter..."
+        git clone https://github.com/LazyVim/starter "${HOME}/.config/nvim"
+        rm -rf "${HOME}/.config/nvim/.git"
+        success "LazyVim installed."
+    else
+        warn "Skipping LazyVim installation."
+    fi
+else
+    success "LazyVim is already installed (~/.config/nvim)."
+fi
+
 
 # ==============================================================================
 #  Phase 2: Linking Dotfiles
@@ -263,6 +319,36 @@ link_file "${DOTFILES_DIR}/zsh/.zshrc" "${HOME}/.zshrc"
 link_file "${DOTFILES_DIR}/zsh/.zprofile" "${HOME}/.zprofile"
 link_file "${DOTFILES_DIR}/bash/.bashrc" "${HOME}/.bashrc"
 link_file "${DOTFILES_DIR}/bash/.bash_profile" "${HOME}/.bash_profile"
+
+# Oh My Zsh Plugins (zsh-sage)
+if [ -d "${HOME}/.oh-my-zsh" ] || [ -n "${ZSH_CUSTOM:-}" ]; then
+    zsh_sage_dir=""
+    if [ -d "/opt/homebrew/opt/zsh-sage" ]; then
+        zsh_sage_dir="/opt/homebrew/opt/zsh-sage"
+    elif [ -d "/usr/local/opt/zsh-sage" ]; then
+        zsh_sage_dir="/usr/local/opt/zsh-sage"
+    elif cmd_exists brew; then
+        zsh_sage_dir="$(brew --prefix zsh-sage 2>/dev/null || true)"
+    fi
+
+    if [ -n "${zsh_sage_dir}" ] && [ -d "${zsh_sage_dir}" ]; then
+        zsh_custom_plugins="${ZSH_CUSTOM:-${HOME}/.oh-my-zsh/custom}/plugins"
+        link_file "${zsh_sage_dir}" "${zsh_custom_plugins}/zsh-sage"
+
+        # Import existing zsh history into sage database (only if not already populated)
+        if [ -f "${HOME}/.zsh_history" ]; then
+            if [ ! -f "${HOME}/.zsh-sage/sage.db" ] || [ ! -s "${HOME}/.zsh-sage/sage.db" ]; then
+                if confirm "Import existing zsh history into zsh-sage database?" "Y"; then
+                    info "Importing history into zsh-sage database..."
+                    zsh -ic '_sage_db_import_history' || true
+                    success "zsh-sage history imported."
+                fi
+            else
+                success "zsh-sage database already initialized (~/.zsh-sage/sage.db)."
+            fi
+        fi
+    fi
+fi
 
 # Karabiner (macOS only or if config dir exists)
 if [[ "${OS}" == "Darwin" ]]; then
@@ -287,6 +373,23 @@ if [ ! -d "${HOME}/.vim/pack/themes/start/dracula" ]; then
     fi
 fi
 
+# Kitty Terminal Emulator
+link_file "${DOTFILES_DIR}/kitty/kitty.conf" "${HOME}/.config/kitty/kitty.conf"
+
+# Tmux & TPM (Tmux Plugin Manager)
+link_file "${DOTFILES_DIR}/tmux/.tmux.conf" "${HOME}/.tmux.conf"
+if [ ! -d "${HOME}/.tmux/plugins/tpm" ]; then
+    if confirm "Tmux Plugin Manager (TPM) not found. Clone it from GitHub?" "Y"; then
+        info "Cloning Tmux Plugin Manager (TPM)..."
+        mkdir -p "${HOME}/.tmux/plugins"
+        git clone https://github.com/tmux-plugins/tpm "${HOME}/.tmux/plugins/tpm"
+        tmux start-server 2>/dev/null || true
+        "${HOME}/.tmux/plugins/tpm/tpm" 2>/dev/null || true
+        "${HOME}/.tmux/plugins/tpm/bin/install_plugins" 2>/dev/null || true
+        success "Cloned TPM to ~/.tmux/plugins/tpm and installed plugins"
+    fi
+fi
+
 # ==============================================================================
 #  Completion
 # ==============================================================================
@@ -294,8 +397,12 @@ echo -e "\n${GREEN}=========================================================="
 echo "          🎉  Dotfiles Setup Completed!  🎉"
 echo "=========================================================="
 echo -e "${NC}"
-info "If any original files were overwritten, they have been backed up in:"
-echo -e "   ${CYAN}${BACKUP_DIR}${NC}\n"
+if [ -d "${BACKUP_DIR}" ]; then
+    info "Original files were backed up in:"
+    echo -e "   ${CYAN}${BACKUP_DIR}${NC}\n"
+else
+    info "No existing files needed to be backed up.\n"
+fi
 
 info "To load the new configuration in your current terminal session, run:"
 echo -e "   ${GREEN}source ~/.zshrc${NC}  (or open a new terminal window)\n"

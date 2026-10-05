@@ -63,4 +63,6 @@ def compile_karabiner():
         return False
 
 if __name__ == "__main__":
-    compile_karabiner()
+    import sys
+    success = compile_karabiner()
+    sys.exit(0 if success else 1)

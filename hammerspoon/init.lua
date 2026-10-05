@@ -13,15 +13,15 @@ hotkey.bind({}, 'F18', pressed, released)
 -- ==========================================
 -- Application Bindings
 -- ==========================================
-hyper:bind({}, "t", function() application.launchOrFocus("Terminal") end)
+hyper:bind({}, "b", function() application.launchOrFocus("Safari") end)
 hyper:bind({}, "c", function() application.launchOrFocus("Calendar") end)
 hyper:bind({}, "f", function() application.launchOrFocus("Finder") end)
-hyper:bind({}, "r", function() application.launchOrFocus("Google Chrome") end) 
+hyper:bind({}, "m", function() application.launchOrFocus("Activity Monitor") end) 
 hyper:bind({}, "n", function() application.launchOrFocus("Notes") end)
-hyper:bind({}, "s", function() application.launchOrFocus("Safari") end)
+hyper:bind({}, "p", function() application.launchOrFocus("Preview") end) 
+hyper:bind({}, "t", function() application.launchOrFocus("kitty") end)
 hyper:bind({}, "y", function() application.launchOrFocus("Symphony") end)
 hyper:bind({}, "u", function() application.launchOrFocus("Calculator") end)
-hyper:bind({}, "p", function() application.launchOrFocus("Activity Monitor") end)
 hyper:bind({}, "v", function() application.launchOrFocus("Visual Studio Code") end) 
 hyper:bind({}, "z", function() application.launchOrFocus("Zed") end) 
 
@@ -55,3 +55,4 @@ hyper:bind({ "cmd", "shift" }, "r", function() hs.reload() end)
 
 -- Show a brief alert when the config loads successfully
 hs.alert.show("Hammerspoon config loaded")
+
