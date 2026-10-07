@@ -12,8 +12,8 @@ A clean, modular repository for saving and restoring developer configurations ac
     *   Kubernetes integration (`kubectx`/`kubens`, `kube-ps1` prompt, and `k9s` CLI UI dashboard)
     *   Rich custom aliases for Maven/Java development, Git workflows, and AI agent init.
 *   **Bash Configuration**: Clean `.bashrc` and `.bash_profile` supporting SDKMAN and Rancher Desktop.
-*   **Kitty Terminal**: GPU-based terminal emulator configured for macOS Option-as-Alt behavior (`macos_option_as_alt yes`) and dedicated escape sequence mapping for seamless Option+Space tmux prefix navigation.
-*   **LazyVim (Neovim)**: Pre-configured Neovim environment maintained in `nvim/` (symlinked to `~/.config/nvim`) featuring seamless Tmux integration (`tmux.lua`) and hidden dotfiles explorer support (`explorer.lua`).
+*   **Kitty Terminal**: GPU-based terminal emulator configured for tab management (`Cmd+T`, `Cmd+1..9`, `Cmd+W`), window splitting (`Cmd+/` vertical, `Cmd+-` horizontal), slanted powerline tab bar, and seamless Neovim bidirectional navigation via `smart-splits.nvim`.
+*   **LazyVim (Neovim)**: Pre-configured Neovim environment maintained in `nvim/` (symlinked to `~/.config/nvim`) featuring seamless Kitty and Tmux split navigation (`navigator.lua` using `smart-splits.nvim`) and hidden dotfiles explorer support (`explorer.lua`).
 *   **Karabiner-Elements**: Deep, modularized keyboard modifications (e.g., option-based vim arrows `Option + H/J/K/L`, capslock tweaks, hold modifications, and mapping tilde to `F18` for Hammerspoon's hyper-key).
 *   **Hammerspoon**: A modal orchestration layout (using `F18` as a trigger for application launching and space switching).
 *   **Vim Configuration**: Custom `.vimrc` integrated with the Dracula Vim colorscheme (automatically cloned during setup).
@@ -261,6 +261,20 @@ This configuration sets the tmux prefix to `Option + Space` (`M-Space`).
 > - `map alt+space send_text all \x1b\x20`
 >
 > If you make changes to Kitty's `macos_option_as_alt` setting, ensure you **completely quit and reopen Kitty** (`Cmd + Q`) for the option key behavior to take effect.
+
+### Kitty Keybindings Reference (Native Tabs & Splits)
+
+| Action | Shortcut |
+| :--- | :--- |
+| **New Tab** | `Cmd + T` (inherits current working directory) |
+| **Switch to Tab 1..9** | `Cmd + 1` .. `Cmd + 9` |
+| **Split Vertically** (side-by-side) | `Cmd + /` (inherits current working directory) |
+| **Split Horizontally** (top-and-bottom) | `Cmd + -` (inherits current working directory) |
+| **Close Split / Window** | `Cmd + W` (closes tab if last window) |
+| **Close Entire Tab** | `Cmd + Shift + W` (closes tab and all its splits) |
+| **Navigate Splits / Neovim** | `Ctrl + h/j/k/l` (seamless across Kitty splits and LazyVim panes) |
+
+---
 
 ### Tmux Keybindings Reference
 

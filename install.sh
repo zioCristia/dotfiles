@@ -368,6 +368,12 @@ link_file "${DOTFILES_DIR}/nvim" "${HOME}/.config/nvim"
 
 # Kitty Terminal Emulator
 link_file "${DOTFILES_DIR}/kitty/kitty.conf" "${HOME}/.config/kitty/kitty.conf"
+link_file "${DOTFILES_DIR}/kitty/macos-launch-services-cmdline" "${HOME}/.config/kitty/macos-launch-services-cmdline"
+for py_file in "${DOTFILES_DIR}/kitty/"*.py; do
+    if [ -f "${py_file}" ]; then
+        link_file "${py_file}" "${HOME}/.config/kitty/$(basename "${py_file}")"
+    fi
+done
 
 # Tmux & TPM (Tmux Plugin Manager)
 link_file "${DOTFILES_DIR}/tmux/.tmux.conf" "${HOME}/.tmux.conf"
