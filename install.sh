@@ -191,6 +191,8 @@ if [[ "${OS}" == "Darwin" ]]; then
             "kube-ps1"
             "k9s"
             "tmux"
+            "lazygit"
+            "fd"
         )
         brew_pkgs_desc=(
             "neovim (hyperextensible Vim-based text editor)"
@@ -200,6 +202,8 @@ if [[ "${OS}" == "Darwin" ]]; then
             "kube-ps1 (K8s context/namespace prompt)"
             "k9s (Kubernetes CLI UI)"
             "tmux (terminal multiplexer)"
+            "lazygit (simple terminal UI for git commands)"
+            "fd (simple, fast alternative to find)"
         )
 
         for ((i=0; i<${#brew_pkgs[@]}; i++)); do
@@ -294,20 +298,6 @@ else
     success "Kitty terminal is already installed."
 fi
 
-# LazyVim Starter (Neovim configuration)
-if [ ! -d "${HOME}/.config/nvim" ] || [ -z "$(ls -A "${HOME}/.config/nvim" 2>/dev/null)" ]; then
-    if confirm "LazyVim configuration (~/.config/nvim) is not installed. Would you like to install it?" "Y"; then
-        info "Installing LazyVim starter..."
-        git clone https://github.com/LazyVim/starter "${HOME}/.config/nvim"
-        rm -rf "${HOME}/.config/nvim/.git"
-        success "LazyVim installed."
-    else
-        warn "Skipping LazyVim installation."
-    fi
-else
-    success "LazyVim is already installed (~/.config/nvim)."
-fi
-
 
 # ==============================================================================
 #  Phase 2: Linking Dotfiles
@@ -372,6 +362,9 @@ if [ ! -d "${HOME}/.vim/pack/themes/start/dracula" ]; then
         success "Cloned Dracula theme to ~/.vim/pack/themes/start/dracula"
     fi
 fi
+
+# Neovim (LazyVim configuration)
+link_file "${DOTFILES_DIR}/nvim" "${HOME}/.config/nvim"
 
 # Kitty Terminal Emulator
 link_file "${DOTFILES_DIR}/kitty/kitty.conf" "${HOME}/.config/kitty/kitty.conf"

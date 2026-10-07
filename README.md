@@ -13,7 +13,7 @@ A clean, modular repository for saving and restoring developer configurations ac
     *   Rich custom aliases for Maven/Java development, Git workflows, and AI agent init.
 *   **Bash Configuration**: Clean `.bashrc` and `.bash_profile` supporting SDKMAN and Rancher Desktop.
 *   **Kitty Terminal**: GPU-based terminal emulator configured for macOS Option-as-Alt behavior (`macos_option_as_alt yes`) and dedicated escape sequence mapping for seamless Option+Space tmux prefix navigation.
-*   **LazyVim (Neovim)**: Modular, fast Neovim configuration bootstrapped from the official LazyVim starter into `~/.config/nvim`.
+*   **LazyVim (Neovim)**: Pre-configured Neovim environment maintained in `nvim/` (symlinked to `~/.config/nvim`) featuring seamless Tmux integration (`tmux.lua`) and hidden dotfiles explorer support (`explorer.lua`).
 *   **Karabiner-Elements**: Deep, modularized keyboard modifications (e.g., option-based vim arrows `Option + H/J/K/L`, capslock tweaks, hold modifications, and mapping tilde to `F18` for Hammerspoon's hyper-key).
 *   **Hammerspoon**: A modal orchestration layout (using `F18` as a trigger for application launching and space switching).
 *   **Vim Configuration**: Custom `.vimrc` integrated with the Dracula Vim colorscheme (automatically cloned during setup).
@@ -37,7 +37,7 @@ To run the automated bootstrap script or compile modular settings, your system m
 
 Instead of maintaining a massive single `karabiner.json` file (which easily gets convoluted), this repository splits your rules into logical, individual modules under `karabiner/rules/`:
 
-*   `01_caps_lock.json`: Maps CapsLock to Control (held) / Escape (tapped).
+*   `01_caps_lock.json`: Maps CapsLock to Left Control (and Shift + CapsLock to Caps Lock).
 *   `02_slash_shift.json`: Maps Slash to Right Shift (held) / Slash (tapped).
 *   `03_shift_backspace.json`: Maps Shift-Backspace to Forward Delete.
 *   `04_option_arrows.json`: Maps Option + `h`/`j`/`k`/`l` to directional arrows.
@@ -75,11 +75,11 @@ To run the installation unattended (automatically accepting all package and tool
 ### What `install.sh` does:
 1.  **Verifies Prerequisites**: Validates that `git`, `curl`, and `python3` are available before proceeding.
 2.  **Backs Up Existing Configs**: Any existing configurations (e.g., `~/.zshrc`, `~/.vimrc`) are backed up inside a timestamped folder under `~/.dotfiles_backup/` so you never lose anything.
-3.  **Installs Missing Packages**: Interactively prompts to install Homebrew, Neovim, ripgrep, Oh My Zsh, Kitty, LazyVim starter, `kubectx`/`kubens`, `zoxide`, `kube-ps1`, `k9s`, `tmux`, `zsh-sage` (trusted formula & tap), Karabiner-Elements, and Hammerspoon if they aren't already installed.
+3.  **Installs Missing Packages**: Interactively prompts to install Homebrew, Neovim, ripgrep, Oh My Zsh, Kitty, `kubectx`/`kubens`, `zoxide`, `kube-ps1`, `k9s`, `tmux`, `zsh-sage` (trusted formula & tap), Karabiner-Elements, and Hammerspoon if they aren't already installed.
 4.  **Compiles Karabiner Configuration**: Runs the Python compilation script to build your latest `karabiner.json` automatically from your modular rules folder.
 5.  **Symlinks Dotfiles & Plugins**: Creates symbolic links from your home directories directly to this repository (including linking `zsh-sage` into Oh My Zsh custom plugins), and imports existing shell history into the `zsh-sage` database.
 6.  **Vim Dracula Bootstrap**: Automatically clones the Dracula colorscheme repository directly into Vim's native package start folder (`~/.vim/pack/themes/start/dracula`).
-7.  **Kitty & Tmux Bootstrap**: Automatically symlinks `~/.config/kitty/kitty.conf` and `~/.tmux.conf`, clones Tmux Plugin Manager (TPM), and initializes plugins including `vim-tmux-navigator`.
+7.  **Neovim, Kitty & Tmux Bootstrap**: Automatically symlinks `~/.config/nvim`, `~/.config/kitty/kitty.conf`, and `~/.tmux.conf`, clones Tmux Plugin Manager (TPM), and initializes plugins including `vim-tmux-navigator`.
 
 ### ⏪ Reverting / Restoring Backup Configurations
 
@@ -110,8 +110,8 @@ Install the core utilities using Homebrew:
 # Install Homebrew (if not present)
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
-# Install CLI dependencies (including neovim, ripgrep, k9s, and tmux)
-brew install neovim ripgrep kubectx zoxide kube-ps1 k9s tmux
+# Install CLI dependencies (including neovim, ripgrep, k9s, tmux, lazygit, and fd)
+brew install neovim ripgrep kubectx zoxide kube-ps1 k9s tmux lazygit fd
 
 # Install zsh-sage (Intelligent autosuggestions)
 brew trust --formula utsavmandal2022/zsh-sage/zsh-sage
@@ -126,10 +126,6 @@ sh -c "$(curl -fsSL toughness/ohmyzsh/master/tools/install.sh)"
 
 # Install Kitty terminal emulator
 curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin
-
-# Install LazyVim starter configuration
-git clone https://github.com/LazyVim/starter ~/.config/nvim
-rm -rf ~/.config/nvim/.git
 ```
 
 ### 2. Manual Compile, Backup & Symlink
@@ -195,6 +191,15 @@ ln -s ~/workspace/dotfiles/vim/.vimrc ~/.vimrc
 # Clone Dracula colorscheme into pack directory
 mkdir -p ~/.vim/pack/themes/start
 git clone https://github.com/dracula/vim.git ~/.vim/pack/themes/start/dracula
+```
+
+#### Neovim (LazyVim setup)
+```bash
+# Ensure existing Neovim configuration is backed up
+[ -e ~/.config/nvim ] || [ -L ~/.config/nvim ] && mv ~/.config/nvim ~/.dotfiles_backup/manual/
+
+# Create symlink
+ln -s ~/workspace/dotfiles/nvim ~/.config/nvim
 ```
 
 #### Kitty Terminal setup
