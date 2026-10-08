@@ -18,6 +18,7 @@ A clean, modular repository for saving and restoring developer configurations ac
 *   **Hammerspoon**: A modal orchestration layout (using `F18` as a trigger for application launching and space switching).
 *   **Vim Configuration**: Custom `.vimrc` integrated with the Dracula Vim colorscheme (automatically cloned during setup).
 *   **Tmux Configuration**: Custom `.tmux.conf` featuring `Option+Space` (`M-Space`) prefix, quick reload shortcut (`Option+Space` + `r`), vim-style pane navigation and resizing, Kitty & LazyVim color fixes, and integration with TPM (`tmux-plugins/tpm`) and `vim-tmux-navigator`.
+*   **Cheat Sheet & Field Manual**: Complete [Developer Survival Guide (CHEATSHEET.md)](CHEATSHEET.md) covering Kitty, Tmux, Vim core grammar, and all LazyVim workflows to conquer the "Vim Dip".
 
 ---
 
