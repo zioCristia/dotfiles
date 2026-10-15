@@ -270,7 +270,8 @@ This configuration sets the tmux prefix to `Option + Space` (`M-Space`).
 | **New Tab** | `Cmd + T` (inherits current working directory) |
 | **Switch to Tab 1..9** | `Cmd + 1` .. `Cmd + 9` |
 | **Split Vertically** (side-by-side) | `Cmd + /` (inherits current working directory) |
-| **Split Horizontally** (top-and-bottom) | `Cmd + -` (inherits current working directory) |
+| **Split Horizontally** (top-and-bottom) | `Cmd + >` or `Cmd + .` (inherits current working directory) |
+| **Toggle Zoom (Full Size)** | `Cmd + Z` (press again to restore splits) |
 | **Close Split / Window** | `Cmd + W` (closes tab if last window) |
 | **Close Entire Tab** | `Cmd + Shift + W` (closes tab and all its splits) |
 | **Navigate Splits / Neovim** | `Ctrl + h/j/k/l` (seamless across Kitty splits and LazyVim panes) |
